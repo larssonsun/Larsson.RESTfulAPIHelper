@@ -10,7 +10,7 @@ using Larsson.RESTfulAPIHelper.Shaping;
 using Larsson.RESTfulAPIHelper.Test.DomainModel;
 using Larsson.RESTfulAPIHelper.Test.DTO;
 using Larsson.RESTfulAPIHelper.Test.Entity;
-using Larsson.RESTfulAPIHelper.Test.Repository;
+using Larsson.RESTfulAPIHelper.Test.Interface;
 
 namespace Larsson.RESTfulAPIHelper.Test.Controller
 {
@@ -21,16 +21,16 @@ namespace Larsson.RESTfulAPIHelper.Test.Controller
     {
         private readonly IMapper _mapper;
         private readonly LinkGenerator _generator;
-        private readonly ProductRepository _repository;
+        private readonly IProductRepository _repository;
 
-        public TestController(IMapper mapper, LinkGenerator generator, ProductRepository repository)
+        public TestController(IMapper mapper, LinkGenerator generator, IProductRepository repository)
         {
             _mapper = mapper;
             _generator = generator;
             _repository = repository;
         }
 
-        [HttpPost("test")]
+        [HttpGet("test")]
         public async Task<ActionResult<ProductDTO>> GetProductsAsync([FromQuery] ProductQueryDTO productQueryDTO)
         {
             if (productQueryDTO == null)

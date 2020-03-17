@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using Larsson.RESTfulAPIHelper.Test.Infrastructure;
+using Larsson.RESTfulAPIHelper.Test.Interface;
 using Larsson.RESTfulAPIHelper.Test.PropertyMapping;
+using Larsson.RESTfulAPIHelper.Test.Repository;
 using Larsson.RESTfulAPIHelper.Test.SortMapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace Larsson.RESTfulAPIHelper.Test
 {
@@ -24,7 +27,9 @@ namespace Larsson.RESTfulAPIHelper.Test
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DemoContext>(dcob =>
-                dcob.UseInMemoryDatabase("RESTfulAPISampleMemoryDb"));
+                dcob.UseInMemoryDatabase("TestMemoryDb"));
+
+            services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddScoped<DemoContextSeed>();
 
@@ -46,10 +51,14 @@ namespace Larsson.RESTfulAPIHelper.Test
             });
 
             services.AddControllers(mo => mo.ReturnHttpNotAcceptable = true)
-               // .AddNewtonsoftJson(options =>
-               // {
-               //     options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
+               // TODO：不知道为何无效
+               // .AddJsonOptions(o => {
+               //     o.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
                // })
+               .AddNewtonsoftJson(options =>
+               {
+                   options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
+               })
                .AddFluentValidation(
                    fvmc => fvmc.RegisterValidatorsFromAssemblyContaining<Startup>().RunDefaultMvcValidationAfterFluentValidationExecutes = false
                );
@@ -60,6 +69,8 @@ namespace Larsson.RESTfulAPIHelper.Test
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSerilogRequestLogging();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
