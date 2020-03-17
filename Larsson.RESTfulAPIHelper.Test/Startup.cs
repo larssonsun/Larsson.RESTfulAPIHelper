@@ -51,7 +51,7 @@ namespace Larsson.RESTfulAPIHelper.Test
             });
 
             services.AddControllers(mo => mo.ReturnHttpNotAcceptable = true)
-               // TODO：不知道为何无效
+               // TODO：System.Text.Json似乎不支持动态类型的属性Camel化
                // .AddJsonOptions(o => {
                //     o.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
                // })
