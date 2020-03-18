@@ -50,6 +50,8 @@ namespace Larsson.RESTfulAPIHelper.Test
                 abo.SuppressModelStateInvalidFilter = true;
             });
 
+            services.AddDistributedMemoryCache();
+
             services.AddControllers(mo => mo.ReturnHttpNotAcceptable = true)
                // TODO：System.Text.Json似乎不支持动态类型的属性Camel化
                // .AddJsonOptions(o => {

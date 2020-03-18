@@ -1,8 +1,9 @@
 ﻿using System;
+using MessagePack;
 
 namespace Larsson.RESTfulAPIHelper.Test.Entity
 {
-
+    [MessagePackObject(keyAsPropertyName: true)]
     public class Product : Entity
     {
         public string Name { get; set; }
