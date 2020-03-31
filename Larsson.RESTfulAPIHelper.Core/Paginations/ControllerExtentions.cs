@@ -45,7 +45,7 @@ namespace Larsson.RESTfulAPIHelper.Pagination
 
             var dict = (paginationParms as IDictionary<string, object>);
 
-            filterProps.Any(x =>
+            filterProps?.Any(x =>
             {
                 dict[x.Key] = x.Value;
                 return false;
