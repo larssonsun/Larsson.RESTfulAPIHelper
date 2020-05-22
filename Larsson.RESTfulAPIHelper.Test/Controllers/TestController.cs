@@ -53,6 +53,17 @@ namespace Larsson.RESTfulAPIHelper.Test.Controller
 
             var cacheKey = $"{nameof(TestController)}_{nameof(GetProductsAsync)}_{Request.QueryString.Value}";
 
+            var gotCache = await _cache.GetCacheAsync<Product>("notExist");
+            Console.WriteLine(gotCache is null);
+
+            await _cache.CreateCacheAsync<Product>(
+                "notExist",
+                async () => await Task<string>.Run(() => { return new Product { Id = Guid.NewGuid() }; }),
+                options => options.SetSlidingExpiration(TimeSpan.FromSeconds(15)));
+
+            gotCache = await _cache.GetCacheAsync<Product>("notExist");
+            Console.WriteLine(gotCache is null);
+
             var pagedProducts =
                 await _cache.CreateOrGetCacheAsync<PagedListBase<Product>>(cacheKey,
                     async () => await _repository.GetProducts(projectQuery),
