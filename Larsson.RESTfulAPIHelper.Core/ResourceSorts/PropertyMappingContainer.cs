@@ -14,7 +14,7 @@ namespace Larsson.RESTfulAPIHelper.SortAndQuery
             _options = options;
         }       
 
-        public IPropertyMapping Resolve<TSource, TDestination>() where TDestination : IEntity
+        public IPropertyMapping Resolve<TSource, TDestination>()
         {
             var matchingMapping = _options.PropertyMappings.OfType<PropertyMapping<TSource, TDestination>>().ToList();
             if (matchingMapping.Count == 1)
@@ -25,7 +25,7 @@ namespace Larsson.RESTfulAPIHelper.SortAndQuery
             throw new Exception($"Cannot find property mapping instance for <{typeof(TSource)},{typeof(TDestination)}");
         }
 
-        public bool ValidMappingExistsFor<TSource, TDestination>(string fields) where TDestination : IEntity
+        public bool ValidMappingExistsFor<TSource, TDestination>(string fields)
         {
             var propertyMapping = Resolve<TSource, TDestination>();
 

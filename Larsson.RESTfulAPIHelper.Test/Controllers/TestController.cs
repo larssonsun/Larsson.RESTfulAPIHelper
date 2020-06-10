@@ -58,7 +58,7 @@ namespace Larsson.RESTfulAPIHelper.Test.Controller
 
             await _cache.CreateCacheAsync<Product>(
                 "notExist",
-                async () => await Task<string>.Run(() => { return new Product { Id = Guid.NewGuid() }; }),
+                async () => await Task<string>.Run(() => { return new Product { PId = Guid.NewGuid() }; }),
                 options => options.SetSlidingExpiration(TimeSpan.FromSeconds(15)));
 
             gotCache = await _cache.GetCacheAsync<Product>("notExist");
