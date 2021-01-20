@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Larsson.RESTfulAPIHelper.Interface;
@@ -22,6 +23,17 @@ namespace Larsson.RESTfulAPIHelper.Test.Repository
         {
             _context = context;
             _propertyMappingContainer = propertyMappingContainer;
+        }
+
+        public IEnumerable<Product> GetProductsSync(ProductQuery parameters)
+        {
+            return new List<Product>{ new Product{
+                 PId = Guid.NewGuid(),
+                 Name = "Sync projects",
+                 Description = "Sync get projects",
+                 IsOnSale = false,
+                 CreateTime = DateTime.Now
+             }};
         }
 
         public async Task<PagedListBase<Product>> GetProducts(ProductQuery parameters)

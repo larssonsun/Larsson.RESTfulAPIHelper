@@ -15,6 +15,7 @@ using Larsson.RESTfulAPIHelper.Test.Interface;
 using Microsoft.Extensions.Caching.Distributed;
 using System;
 using MessagePack;
+using System.Linq;
 
 namespace Larsson.RESTfulAPIHelper.Test.Controller
 {
@@ -54,20 +55,36 @@ namespace Larsson.RESTfulAPIHelper.Test.Controller
             var cacheKey = $"{nameof(TestController)}_{nameof(GetProductsAsync)}_{Request.QueryString.Value}";
 
             var gotCache = await _cache.GetCacheAsync<Product>("notExist");
-            Console.WriteLine(gotCache is null);
 
+            Console.WriteLine(gotCache is null);
+            
+            // await _cache.CreateCacheAsync<Product>(
+            //     "notExist",
+            //     async () => await Task<string>.Run(() => { return new Product { PId = Guid.NewGuid() }; }),
+            //     options => options.SetSlidingExpiration(TimeSpan.FromSeconds(15)));
             await _cache.CreateCacheAsync<Product>(
                 "notExist",
-                async () => await Task<string>.Run(() => { return new Product { PId = Guid.NewGuid() }; }),
+                 () => { return new Product { PId = Guid.NewGuid() }; },
                 options => options.SetSlidingExpiration(TimeSpan.FromSeconds(15)));
-
             gotCache = await _cache.GetCacheAsync<Product>("notExist");
+
             Console.WriteLine(gotCache is null);
+
+            // // sync type
+            // var syncProduct =
+            //     await _cache.CreateOrGetCacheAsync<IEnumerable<Product>>("syncProduct",
+            //         () => _repository.GetProductsSync(projectQuery),
+            //         options => options.SetSlidingExpiration(TimeSpan.FromSeconds(15)));
+            // Console.WriteLine("----------- sync project" + syncProduct.First().Description);
+
+
 
             var pagedProducts =
                 await _cache.CreateOrGetCacheAsync<PagedListBase<Product>>(cacheKey,
                     async () => await _repository.GetProducts(projectQuery),
                     options => options.SetSlidingExpiration(TimeSpan.FromSeconds(15)));
+
+
 
             var filterProps = new Dictionary<string, object>();
             filterProps.Add("name", projectQuery.Name);
